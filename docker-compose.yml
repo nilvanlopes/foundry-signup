@@ -1,0 +1,24 @@
+services:
+  foundry-signup:
+    image: foundry-signup:latest
+    build:
+      context: .
+    env_file:
+      - .env
+    networks:
+      - traefik-public
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.http.routers.foundry-signup.rule=Host(`signup.nilvanlopes.com`)"
+        - "traefik.http.routers.foundry-signup.entrypoints=websecure"
+        - "traefik.http.routers.foundry-signup.tls.certresolver=cloudflare"
+        - "traefik.http.services.foundry-signup.loadbalancer.server.port=8787"
+
+networks:
+  traefik-public:
+    external: true
